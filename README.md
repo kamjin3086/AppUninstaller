@@ -23,21 +23,11 @@ A lightweight, native macOS app uninstaller with drag-and-drop support. Built wi
 
 ## Screenshots
 
-```
-┌─────────────────────────────────────┐
-│  🗑️ App Uninstaller                │
-├─────────────────────────────────────┤
-│                                     │
-│      ┌─────────────────────┐        │
-│      │                     │        │
-│      │   ⬇️ Drop .app here │        │
-│      │                     │        │
-│      └─────────────────────┘        │
-│                                     │
-│     Drag any .app to uninstall      │
-│                                     │
-└─────────────────────────────────────┘
-```
+| Main Interface | Ready to Uninstall |
+|:--------------:|:------------------:|
+| ![Main Interface](docs/screenshots/main01.png) | ![Ready to Uninstall](docs/screenshots/main02.png) |
+
+*Drag any .app file to uninstall it along with all related files.*
 
 ## Installation
 
@@ -56,7 +46,7 @@ Requirements:
 
 ```bash
 # Clone the repository
-git clone https://github.com/user/AppUninstaller.git
+git clone https://github.com/kamjin3086/AppUninstaller.git
 cd AppUninstaller
 
 # Build release version
