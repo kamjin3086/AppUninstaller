@@ -1,0 +1,23 @@
+# Build artifacts
+.build/
+.swiftpm/
+DerivedData/
+*.xcodeproj
+*.xcworkspace
+
+# macOS
+.DS_Store
+*.dSYM
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# App bundle (built locally)
+*.app
+
+# Archives
+*.zip
+*.tar.gz
