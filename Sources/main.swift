@@ -80,19 +80,19 @@ struct ContentView: View {
         .frame(width: 500, height: 450)
         .background(Color(NSColor.windowBackgroundColor))
         .confirmationDialog(
-            "确认卸载",
+            "Confirm Uninstall",
             isPresented: $showConfirmation,
             titleVisibility: .visible
         ) {
-            Button("卸载", role: .destructive) {
+            Button("Uninstall", role: .destructive) {
                 if let app = currentApp {
                     performUninstall(app: app)
                 }
             }
-            Button("取消", role: .cancel) {}
+            Button("Cancel", role: .cancel) {}
         } message: {
             if let app = currentApp {
-                Text("将删除 \(app.name) 及其 \(app.relatedFiles.count) 个关联文件，此操作不可撤销！")
+                Text("This will delete \(app.name) and \(app.relatedFiles.count) related files. This action cannot be undone!")
             }
         }
     }
@@ -107,7 +107,7 @@ struct ContentView: View {
                 .font(.headline)
             Spacer()
             if case .ready = state {
-                Button("重新选择") {
+                Button("Choose Another") {
                     resetState()
                 }
                 .buttonStyle(.plain)
@@ -144,11 +144,11 @@ struct ContentView: View {
                         .font(.system(size: 60))
                         .foregroundColor(isTargeted ? .blue : .gray)
                     
-                    Text("拖放应用到此处")
+                    Text("Drop App Here")
                         .font(.title2)
                         .foregroundColor(.primary)
                     
-                    Text("将要卸载的 .app 文件拖到这里")
+                    Text("Drag the .app file you want to uninstall here")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -163,7 +163,7 @@ struct ContentView: View {
         VStack(spacing: 20) {
             ProgressView()
                 .scaleEffect(1.5)
-            Text("正在分析应用...")
+            Text("Analyzing app...")
                 .font(.headline)
         }
     }
@@ -193,7 +193,7 @@ struct ContentView: View {
                 .padding(.horizontal, 40)
             
             VStack(alignment: .leading, spacing: 8) {
-                Text("将删除以下 \(app.relatedFiles.count) 个文件:")
+                Text("The following \(app.relatedFiles.count) files will be deleted:")
                     .font(.subheadline.bold())
                 
                 ScrollView {
@@ -222,7 +222,7 @@ struct ContentView: View {
             }) {
                 HStack {
                     Image(systemName: "trash.fill")
-                    Text("卸载应用")
+                    Text("Uninstall App")
                 }
                 .frame(width: 200, height: 40)
                 .background(Color.red)
@@ -238,7 +238,7 @@ struct ContentView: View {
         VStack(spacing: 20) {
             ProgressView()
                 .scaleEffect(1.5)
-            Text("正在卸载...")
+            Text("Uninstalling...")
                 .font(.headline)
             
             ScrollView {
@@ -261,14 +261,14 @@ struct ContentView: View {
                 .font(.system(size: 60))
                 .foregroundColor(.green)
             
-            Text("卸载完成！")
+            Text("Uninstall Complete!")
                 .font(.title2.bold())
             
-            Text("建议重启电脑以确保后台服务完全终止")
+            Text("It is recommended to restart your computer to ensure all background services are terminated")
                 .font(.caption)
                 .foregroundColor(.secondary)
             
-            Button("继续卸载其他应用") {
+            Button("Uninstall Another App") {
                 resetState()
             }
             .buttonStyle(.borderedProminent)
@@ -281,7 +281,7 @@ struct ContentView: View {
                 .font(.system(size: 60))
                 .foregroundColor(.red)
             
-            Text("卸载失败")
+            Text("Uninstall Failed")
                 .font(.title2.bold())
             
             Text(message)
@@ -290,7 +290,7 @@ struct ContentView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
             
-            Button("重试") {
+            Button("Retry") {
                 resetState()
             }
             .buttonStyle(.borderedProminent)
@@ -306,7 +306,7 @@ struct ContentView: View {
                   let url = URL(dataRepresentation: data, relativeTo: nil),
                   url.pathExtension == "app" else {
                 DispatchQueue.main.async {
-                    state = .error("请拖入 .app 格式的应用程序")
+                    state = .error("Please drop a .app file")
                 }
                 return
             }
@@ -350,7 +350,7 @@ struct ContentView: View {
                     if success {
                         state = .completed
                     } else {
-                        state = .error(error ?? "未知错误")
+                        state = .error(error ?? "Unknown error")
                     }
                 }
             }
@@ -370,7 +370,7 @@ class AppAnalyzer {
         let fileManager = FileManager.default
         
         guard fileManager.fileExists(atPath: appPath) else {
-            return .failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "应用不存在"]))
+            return .failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Application does not exist"]))
         }
         
         let appName = (appPath as NSString).lastPathComponent.replacingOccurrences(of: ".app", with: "")
@@ -471,30 +471,30 @@ class AppUninstaller {
         let fileManager = FileManager.default
         
         for file in app.relatedFiles {
-            progress("正在删除: \(file)")
+            progress("Deleting: \(file)")
             
             do {
                 if fileManager.fileExists(atPath: file) {
                     if fileManager.isDeletableFile(atPath: file) {
                         try fileManager.removeItem(atPath: file)
-                        progress("✓ 已删除: \(file)")
+                        progress("✓ Deleted: \(file)")
                     } else {
                         let success = deleteWithPrivileges(path: file)
                         if success {
-                            progress("✓ 已删除 (sudo): \(file)")
+                            progress("✓ Deleted (sudo): \(file)")
                         } else {
                             failedFiles.append(file)
-                            progress("✗ 删除失败: \(file)")
+                            progress("✗ Failed to delete: \(file)")
                         }
                     }
                 }
             } catch {
                 let success = deleteWithPrivileges(path: file)
                 if success {
-                    progress("✓ 已删除 (sudo): \(file)")
+                    progress("✓ Deleted (sudo): \(file)")
                 } else {
                     failedFiles.append(file)
-                    progress("✗ 删除失败: \(file)")
+                    progress("✗ Failed to delete: \(file)")
                 }
             }
         }
@@ -502,7 +502,7 @@ class AppUninstaller {
         if failedFiles.isEmpty {
             completion(true, nil)
         } else {
-            completion(true, "部分文件删除失败: \(failedFiles.count) 个")
+            completion(true, "Failed to delete \(failedFiles.count) files")
         }
     }
     
